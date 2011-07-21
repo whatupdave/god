@@ -2,7 +2,7 @@ module God
   class Process
     WRITES_PID = [:start, :restart]
     
-    attr_accessor :name, :uid, :gid, :log, :log_cmd, :err_log, :err_log_cmd,
+    attr_accessor :name, :uid, :gid, :log, :log_cmd, :err_log, :err_log_cmd, :stdin_cmd,
                   :start, :stop, :restart, :unix_socket, :chroot, :env, :dir,
                   :stop_timeout, :stop_signal, :umask
     
@@ -15,6 +15,7 @@ module God
       @pid = nil
       @unix_socket = nil
       @log_cmd = nil
+      @stdin_cmd = nil
       @stop_timeout = God::STOP_TIMEOUT_DEFAULT
       @stop_signal = God::STOP_SIGNAL_DEFAULT
     end
@@ -234,10 +235,12 @@ module God
           # double fork god-daemonized processes
           # we don't want to wait for them to finish
           r, w = IO.pipe
+          
           begin
             opid = fork do
               STDOUT.reopen(w)
               r.close
+              
               pid = self.spawn(command)
               puts pid.to_s # send pid back to forker
             end
@@ -298,7 +301,13 @@ module God
         self.dir ||= '/'
         Dir.chdir self.dir
         $0 = command
-        STDIN.reopen "/dev/null"
+
+        if self.stdin_cmd
+          STDIN.reopen IO.popen(self.stdin_cmd)
+        else
+          STDIN.reopen "/dev/null"
+        end
+        
         if self.log_cmd
           STDOUT.reopen IO.popen(self.log_cmd, "a") 
         else

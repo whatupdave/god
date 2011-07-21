@@ -16,6 +16,7 @@ module God
                               :dir=, :pid_file, :pid_file=, :log, :log=,
                               :log_cmd, :log_cmd=, :err_log, :err_log=,
                               :err_log_cmd, :err_log_cmd=, :alive?, :pid,
+                              :stdin_cmd, :stdin_cmd=,
                               :unix_socket, :unix_socket=, :chroot, :chroot=,
                               :env, :env=, :signal, :stop_timeout=,
                               :stop_signal=, :umask, :umask=

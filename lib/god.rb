@@ -625,7 +625,7 @@ module God
       LOG.info("Syslog disabled.")
     end
     
-    applog(nil, :info, "Using pid file directory: #{self.pid_file_directory}")
+    applog(nil, :info, "Using pidz file directory: #{self.pid_file_directory}")
   end
   
   # Initialize and startup the machinery that makes god work.
